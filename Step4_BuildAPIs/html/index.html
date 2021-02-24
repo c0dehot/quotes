@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quotes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+        <h1>Quotes App</h1>
+
+        <!-- control bar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a href="/quote.html" class="btn btn-primary">Add Quote</a>
+                    </li>
+                </ul>
+                <!-- <form class="d-flex">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form> -->
+            </div>
+        </nav>
+
+        <!-- quotes list -->
+        <div id='quoteList'>
+            <!-- get from server: /api/quotes -->
+
+            <div class="card mt-5">
+                <div class="card-body">
+                  <h5 class="card-title">To Be or Not To Be</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">Shakespeare</h6>
+                  <button class="card-link btn btn-secondary btn-sm">Edit</button>
+                  <button class="card-link btn btn-secondary btn-sm">Delete</button>
+                </div>
+              </div>
+    
+              <div class="card mt-5">
+                <div class="card-body">
+                  <h5 class="card-title">You may delay, but time will not</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">Benjamin Franklin</h6>
+                  <button class="card-link btn btn-secondary btn-sm">Edit</button>
+                  <button class="card-link btn btn-secondary btn-sm">Delete</button>
+                </div>
+              </div>
+        </div>        
+    </div>
+</body>
+</html>
