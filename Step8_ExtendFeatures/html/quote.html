@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quote</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Quote</h1>
+
+        <!-- move the form submission to javascript code -->
+        <form onSubmit="submitForm(event)">
+            <!-- track a hidden id for the quote entry -->
+            <input name="id" id="id" type="hidden" value="" />
+
+            <div class="mb-3">
+                <label for="author" class="form-label">Quote Author</label>
+                <input class="form-control" name="author" id="author" placeholder="William Shakespeare">
+            </div>
+            <div class="mb-3">
+                <label for="quote" class="form-label">Quote Text</label>
+                <textarea class="form-control" name="quote" id="quote" rows="3" placeholder="To Be or Not To Be"></textarea>
+            </div>
+            
+            <button class="btn btn-primary">Save Quote</button>
+            <a href="/" class="btn btn-secondary float-end">Cancel</a>
+        </form>
+    </div>
+
+    <script>
+        function fetchJSON( url, method='get', data={} ){
+            const fetchOptions = {
+                method,
+                headers: { 'Content-Type': 'application/json'},
+            }
+            if( method==='post' || method==='put' )
+                fetchOptions.body = JSON.stringify(data)
+
+            // for get we don't need header, others we do
+            return fetch(url, fetchOptions).then( r=>r.json() )
+        }        
+
+        async function editQuote(){
+            // get the quote from hash, ex. #1
+            const id = location.hash.substr(1)
+            console.log( `[editQuote] ${id}` )
+            if( Number(id)>0 ){
+                // load the data
+                const quoteData = await fetchJSON( `/api/quotes/${id}` )
+                if( quoteData.id>0 ){
+                    console.log( ` ... quoteData: `, quoteData )
+                    // display the quote info
+                    document.querySelector('#id').value = quoteData.id
+                    document.querySelector('#author').value = quoteData.author
+                    document.querySelector('#quote').value = quoteData.quote
+                }
+            }
+        }
+
+        async function submitForm(event){
+            event.preventDefault()
+
+            const id = document.querySelector('#id').value
+            const quoteData = {
+                id,
+                author: document.querySelector('#author').value,
+                quote: document.querySelector('#quote').value
+            }
+            console.log( `[submitForm] sending data: `, quoteData )
+
+            // if it's editing an id, then it's a PUT else a POST for new entry
+            console.log( `id='${id} method(${id ? 'put' : 'post'})` )
+
+            const result = await fetchJSON( `/api/quotes/${id}`, id ? 'put' : 'post', quoteData )
+            console.log( ` ... result: `, result )
+            alert( result.message )
+
+            // redirect to the main page
+            location.href = "/"
+        }
+
+        // load the edit quote
+        editQuote()
+    </script>    
+</body>
+</html>
