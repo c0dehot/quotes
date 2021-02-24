@@ -3,6 +3,8 @@ const app = express()
 
 const PORT = process.env.PORT || 3000
 
+const db = require( './app/connection' )('quotes_db','r00tr00t')
+
 // will share any static html files with the browser
 app.use( express.static('html') )
 
@@ -10,34 +12,30 @@ app.use( express.static('html') )
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
-// our global data / database
-let quotesList = [
-    { id: 1, author: "ShakeSpeare", quote: "To Be or Not To Be" },
-    { id: 2, author: "Terminator", quote: "I'll be Back!" },
-    { id: 3, author: "Benjamin Franklin", quote: "You don't get no time back!" }
-]
 
 // Routes (Endpoints) =========================================
-app.get( '/api/quotes', function( req, res ){
+app.get( '/api/quotes', async function( req, res ){
+    const quotesList = await db.query( "SELECT * FROM quotes" )
+    console.log( `[GET /api/quote] quotesList` )
     res.send(quotesList)
 })
 
-app.post( '/api/quotes', function( req, res ){
+app.post( '/api/quotes', async function( req, res ){
     const quoteData = req.body
-    quoteData.id = quotesList.length
-    console.log( `[POST /api/quotes] quoteData:`, quoteData )
-    quotesList.push( quoteData )
+    const result = await db.query( `INSERT INTO quotes (author,quote) VALUES(?,?)`, 
+        [quoteData.author, quoteData.quote] )
+    console.log( `[POST /api/quotes] quoteData.result`, quoteData, result )
+    
     // if we are using RESTful javascript call we can send JSON data back
     // res.send( { message: "Quote sent!"} )
     // if we are doing a FORM POST direclty, we need to redirect to the index page.
     res.redirect( '/index.html' )
 })
 
-app.delete( '/api/quotes/:id', function( req, res ){
+app.delete( '/api/quotes/:id', async function( req, res ){
     const id = req.params.id
 
-    // delete the id entry
-    quotesList = quotesList.filter( quote=>quote.id != id )
+    const result = await db.query( `DELETE FROM quotes WHERE id='${id}'`)
 
     res.send( { message: `Deleted ${id}` } )
 })
