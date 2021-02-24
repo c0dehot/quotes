@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quotes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+        <h1>Quotes App</h1>
+
+        <!-- control bar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a href="/quote.html" class="btn btn-primary">Add Quote</a>
+                    </li>
+                </ul>
+                <!-- <form class="d-flex">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form> -->
+            </div>
+        </nav>
+
+        <!-- quotes list -->
+        <div id='quoteList'>
+            <!-- get from server: GET /api/quotes -->
+        </div>        
+    </div>
+    <script>
+        function editQuote( id ){
+            alert( `editing ${id}` )
+        }
+        // function fetchJSON( url, method='get', data={} ){
+		// 		const fetchData = {
+		// 			method,
+		// 			headers: { 'Content-Type': 'application/json'},
+		// 			body: JSON.stringify(data)
+		// 		}
+		// 		// for get we don't need header, others we do
+		// 		return fetch(url, method!=='get' ? fetchData : {}).then( r=>r.json() )
+		// 	}
+        async function deleteQuote( id ){
+            console.log( `[deleteQuote] ${id}` )
+            const fetchOptions = {
+                headers: { 'Content-Type': 'application/json'},
+                method: 'delete'
+            }
+            const result = await fetch( `/api/quotes/${id}`, fetchOptions ).then( r=>r.json() )
+
+            // reload the quotes with the deleted ones now gone
+            refreshQuotes()
+        }
+        
+        async function refreshQuotes(){
+            // 1. call server and get quotes: /api/quotes
+            const quotes = await fetch( '/api/quotes' ).then( r=>r.json() )
+
+            // 2. loop through and display data
+            document.querySelector('#quoteList').innerHTML = ''
+            quotes.forEach( quote=>{
+                document.querySelector('#quoteList').innerHTML += `
+                <div class="card mt-5">
+                    <div class="card-body">
+                    <h5 class="card-title">${quote.quote}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">${quote.author}</h6>
+                    <button onClick="editQuote('${quote.id}')" class="card-link btn btn-secondary btn-sm">Edit</button>
+                    <button onClick="deleteQuote('${quote.id}')" class="card-link btn btn-secondary btn-sm">Delete</button>
+                    </div>
+                </div>
+                `
+            })
+        }
+        refreshQuotes()
+    </script>
+</body>
+</html>
